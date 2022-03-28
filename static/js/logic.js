@@ -104,18 +104,22 @@ d3.json(earthquakesURL, function(earthquakeData) {
         }
     // Add earthquakeData to earthquakes LayerGroups 
     }).addTo(earthquakes);
-    // Add earthquakes Layer to the Map
+
+    // Add earthquakes layer to the map
     earthquakes.addTo(myMap);
 
     // Retrieve platesURL (Tectonic Plates GeoJSON Data) with D3
     d3.json(platesURL, function(plateData) {
-        // Create a GeoJSON Layer the plateData
+
+        // Create a GeoJSON layer the plateData
         L.geoJson(plateData, {
             color: "#DC143C",
             weight: 2
+
         // Add plateData to tectonicPlates LayerGroups 
         }).addTo(tectonicPlates);
-        // Add tectonicPlates Layer to the Map
+
+        // Add tectonicPlates Layer to the map
         tectonicPlates.addTo(myMap);
     });
 
