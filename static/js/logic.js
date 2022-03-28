@@ -1,14 +1,12 @@
-/* Visualising Data with Leaflet - logic.js */
-
-// Earthquakes & Tectonic Plates GeoJSON URL Variables
+// Define earthquakes and tectonic plate variables
 var earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 var platesURL = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 
-// Initialize & Create Two Separate LayerGroups: earthquakes & tectonicPlates
+// Initialise and create 2 separate layer groups: earthquakes & tectonic plates
 var earthquakes = new L.LayerGroup();
 var tectonicPlates = new L.LayerGroup();
 
-// Define Variables for Tile Layers
+// Define variables for tile layers
 var satelliteMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
     maxZoom: 18,
@@ -30,39 +28,39 @@ var outdoorsMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.
     accessToken: API_KEY
 });
 
-// Define baseMaps Object to Hold Base Layers
+// Define base maps to hold base layers
 var baseMaps = {
     "Satellite": satelliteMap,
     "Grayscale": grayscaleMap,
     "Outdoors": outdoorsMap
 };
 
-// Create Overlay Object to Hold Overlay Layers
+// Create overlay object to hold overlay layers
 var overlayMaps = {
     "Earthquakes": earthquakes,
     "Fault Lines": tectonicPlates
 };
 
-// Create Map, Passing In satelliteMap & earthquakes as Default Layers to Display on Load
+// Create map, pass in 'satelliteMap' and 'earthquakes' as default layers to display on initial load
 var myMap = L.map("map", {
     center: [37.09, -95.71],
     zoom: 2,
     layers: [satelliteMap, earthquakes]
 });
 
-// Create a Layer Control + Pass in baseMaps and overlayMaps + Add the Layer Control to the Map
+// Create a layer control, pass in base maps and overlay maps and add the layer control to the map
 L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
 // Retrieve earthquakesURL (USGS Earthquakes GeoJSON Data) with D3
 d3.json(earthquakesURL, function(earthquakeData) {
-    // Function to Determine Size of Marker Based on the Magnitude of the Earthquake
+    // Create a function to determine size of markers based on the magnitude of earthquakes
     function markerSize(magnitude) {
         if (magnitude === 0) {
           return 1;
         }
         return magnitude * 3;
     }
-    // Function to Determine Style of Marker Based on the Magnitude of the Earthquake
+    // Create a function to determine style of marker based on magnitudes of earthquakes
     function styleInfo(feature) {
         return {
           opacity: 1,
@@ -74,7 +72,7 @@ d3.json(earthquakesURL, function(earthquakeData) {
           weight: 0.5
         };
     }
-    // Function to Determine Color of Marker Based on the Magnitude of the Earthquake
+    // Create a function to determine colour of markers based on magnitudes of earthquakes
     function chooseColor(magnitude) {
         switch (true) {
         case magnitude > 5:
@@ -91,14 +89,14 @@ d3.json(earthquakesURL, function(earthquakeData) {
             return "#DAF7A6";
         }
     }
-    // Create a GeoJSON Layer Containing the Features Array on the earthquakeData Object
+    // Create a GeoJSON layer containing the features array on the earthquakeData object
     L.geoJSON(earthquakeData, {
         pointToLayer: function(feature, latlng) {
             return L.circleMarker(latlng);
         },
         style: styleInfo,
-        // Function to Run Once For Each feature in the features Array
-        // Give Each feature a Popup Describing the Place & Time of the Earthquake
+        // Create a 'run once for each' function feature in the features array
+        // Give each feature a pop-up describing the place/time of all earthquakes
         onEachFeature: function(feature, layer) {
             layer.bindPopup("<h4>Location: " + feature.properties.place + 
             "</h4><hr><p>Date & Time: " + new Date(feature.properties.time) + 
@@ -121,7 +119,7 @@ d3.json(earthquakesURL, function(earthquakeData) {
         tectonicPlates.addTo(myMap);
     });
 
-    // Set Up Legend
+    // Create and set up legend
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function() {
         var div = L.DomUtil.create("div", "info legend"), 
@@ -136,6 +134,6 @@ d3.json(earthquakesURL, function(earthquakeData) {
         }
         return div;
     };
-    // Add Legend to the Map
+    // Add legend to the map
     legend.addTo(myMap);
 });
